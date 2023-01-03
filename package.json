@@ -1,5 +1,4 @@
 {
-  "private": true,
   "displayName": "Tuya RGB interface",
   "name": "homebridge-tuya-rgb-interface",
   "version": "1.0.0",
