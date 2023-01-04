@@ -1,8 +1,8 @@
 import { API, DynamicPlatformPlugin, Logger, PlatformAccessory, PlatformConfig, Service, Characteristic } from 'homebridge';
 
 import { PLATFORM_NAME, PLUGIN_NAME } from './settings';
-import { ExamplePlatformAccessory } from './platformAccessory';
 import BridgeAPI from './api';
+import BulbAccessory from './accessories/BulbAccessory';
 
 /**
  * HomebridgePlatform
@@ -15,13 +15,11 @@ export class TuyaRGBInterfacePlatform implements DynamicPlatformPlugin {
 
   // this is used to track restored cached accessories
   public readonly accessories: PlatformAccessory[] = [];
+  private retryCount = 0;
 
-  constructor(
-    public readonly log: Logger,
-    public readonly config: PlatformConfig,
-    public readonly api: API,
-  ) {
+  constructor(public readonly log: Logger, public readonly config: PlatformConfig, public readonly api: API) {
     this.log.info('Initializing platform...');
+    this.retryCount = 0;
 
     // Called when accessories are finished being restored from the disk
     this.api.on('didFinishLaunching', () => {
@@ -44,22 +42,33 @@ export class TuyaRGBInterfacePlatform implements DynamicPlatformPlugin {
       this.log.info(`Found ${devices?.length} local devices from the bridge`);
 
       for (const device of devices) {
-        const uuid = this.api.hap.uuid.generate(device);
+        this.log.debug('Processing device:', device.name);
+        const uuid = this.api.hap.uuid.generate(device.id);
 
         // Create and register the device with HB
-        const accessory = new this.api.platformAccessory(device, uuid);
+        const accessory = new this.api.platformAccessory(device.name, uuid);
 
         // Store the ID in it's context
-        accessory.context.id = device;
+        accessory.context.device = device;
 
         // Setup and create handlers
-        new ExamplePlatformAccessory(this, accessory);
+        new BulbAccessory(this, accessory);
 
         // Register with the API
         this.api.registerPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [accessory]);
       }
     } else {
       this.log.warn('No available accessories to process');
+
+      if (this.retryCount < 3) {
+        this.log.warn('Retrying in 10 seconds...');
+        setTimeout(() => {
+          this.getLocalDevicesFromBridge();
+        }, 10000);
+        this.retryCount += 1;
+      } else {
+        this.log.warn('Giving up after 3 retries');
+      }
     }
   }
 

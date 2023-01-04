@@ -2,13 +2,14 @@ import axios from 'axios';
 import { API_URL } from '../utils/const';
 
 class BridgeAPI {
-  private constructor(){
+  private constructor() {
     // Nothing
   }
 
   public static shared = new BridgeAPI();
 
-  public async getDevices(): Promise<string[]|null> {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public async getDevices(): Promise<any[] | null> {
     try {
       const resp = await axios.get(`${API_URL}/devices`);
 

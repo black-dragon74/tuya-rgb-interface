@@ -6,10 +6,10 @@
     "type": "object",
     "properties": {
       "name": {
-        "title": "Name",
+        "title": "DummyName",
         "type": "string",
-        "required": true,
-        "default": "Example Dynamic Platform"
+        "required": false,
+        "default": "TuyaRGBInterface"
       }
     }
   }
