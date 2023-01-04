@@ -28,7 +28,7 @@ class BulbAccessory {
 
     // Watch for state changes to update the state asynchonously
     this.TuyaBulb.on('power', (currentPower: boolean) => {
-      this.platform.log.info('Power changed to', currentPower);
+      this.platform.log.debug('Power changed to', currentPower);
       this.service.updateCharacteristic(this.platform.Characteristic.On, currentPower);
     });
 
@@ -45,11 +45,11 @@ class BulbAccessory {
     this.service
       .getCharacteristic(this.platform.Characteristic.On)
       .onGet(() => {
-        this.platform.log.info('Get On:', this.accessory.displayName);
+        this.platform.log.debug('Get On:', this.accessory.displayName);
         return this.TuyaBulb.getPower();
       })
       .onSet(async (value: CharacteristicValue) => {
-        this.platform.log.info('Set On:', this.accessory.displayName, value);
+        this.platform.log.debug('Set On:', this.accessory.displayName, value);
         if ((value as boolean) === true) {
           await this.TuyaBulb.turnOn();
         } else {

@@ -23,7 +23,7 @@ class TuyaBulb extends EventEmitter {
     this._state_cache = {} as TuyaBulbState;
 
     setInterval(() => {
-      this._log.info('Polling state for', this._id);
+      this._log.debug('Polling state for', this._id);
       this.getPeriodicState();
       this._log.debug('State:', this._state);
     }, 5000);
