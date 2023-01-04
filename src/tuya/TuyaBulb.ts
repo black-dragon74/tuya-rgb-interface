@@ -1,7 +1,7 @@
 import axios from 'axios';
-import { Logger } from 'homebridge';
+import { Logger, PlatformConfig } from 'homebridge';
 import { EventEmitter } from 'stream';
-import { API_URL, TUYA_BRIDGE_ERROR_CODES } from '../utils/const';
+import { TUYA_BRIDGE_ERROR_CODES } from '../utils/const';
 
 interface TuyaBulbState {
   power: boolean;
@@ -11,16 +11,22 @@ interface TuyaBulbState {
 class TuyaBulb extends EventEmitter {
   private _id: string;
   private _log: Logger;
+  private _config: PlatformConfig;
   private _state: TuyaBulbState;
   private _state_cache: TuyaBulbState;
+  private API_URL: string;
 
-  constructor(id: string, log: Logger) {
+  constructor(id: string, log: Logger, config: PlatformConfig) {
     super();
     this._id = id;
     this._log = log;
+    this._config = config;
 
     this._state = {} as TuyaBulbState;
     this._state_cache = {} as TuyaBulbState;
+    this.API_URL = config.api;
+
+    this._log.info('Initializing TuyaBulb', this.API_URL);
 
     setInterval(() => {
       this._log.debug('Polling state for', this._id);
@@ -34,7 +40,7 @@ class TuyaBulb extends EventEmitter {
   }
 
   async turnOn() {
-    const powerURL = `${API_URL}/${this._id}/on`;
+    const powerURL = `${this.API_URL}/${this._id}/on`;
     try {
       const req = await axios.get(powerURL);
       const resp = req.data;
@@ -61,7 +67,7 @@ class TuyaBulb extends EventEmitter {
   }
 
   async turnOff() {
-    const powerURL = `${API_URL}/${this._id}/off`;
+    const powerURL = `${this.API_URL}/${this._id}/off`;
     try {
       const req = await axios.get(powerURL);
       const resp = req.data;
@@ -94,7 +100,7 @@ class TuyaBulb extends EventEmitter {
    * from the Tuya Bridge API. It gets the state and then parses the DPS
    */
   async getPeriodicState() {
-    const stateURL = `${API_URL}/${this._id}/status`;
+    const stateURL = `${this.API_URL}/${this._id}/status`;
 
     try {
       const req = await axios.get(stateURL);

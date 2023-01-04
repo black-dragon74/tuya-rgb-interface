@@ -1,8 +1,3 @@
-import * as dotenv from 'dotenv';
-dotenv.config();
-
-export const API_URL = process.env.TUYA_API_URL || 'http://192.168.0.177:5000';
-
 export const enum TUYA_BULB_DPS {
   POWER = 20,
   MODE,

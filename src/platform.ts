@@ -36,7 +36,8 @@ export class TuyaRGBInterfacePlatform implements DynamicPlatformPlugin {
       this.api.unregisterPlatformAccessories(PLUGIN_NAME, PLATFORM_NAME, [cachedAcc]);
     }
 
-    const devices = await BridgeAPI.shared.getDevices();
+    const bridge = new BridgeAPI(this.config.api);
+    const devices = await bridge.getDevices();
 
     if (devices !== null) {
       this.log.info(`Found ${devices?.length} local devices from the bridge`);

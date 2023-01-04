@@ -5,11 +5,11 @@
   "schema": {
     "type": "object",
     "properties": {
-      "name": {
-        "title": "DummyName",
+      "api": {
+        "title": "API URL",
         "type": "string",
-        "required": false,
-        "default": "TuyaRGBInterface"
+        "required": true,
+        "default": "http://localhost:5000"
       }
     }
   }

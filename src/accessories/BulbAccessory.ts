@@ -11,7 +11,7 @@ class BulbAccessory {
     private readonly accessory: PlatformAccessory, // This is an accessory we created in the platform
   ) {
     // Set the bulb
-    this.TuyaBulb = new TuyaBulb(accessory.context.device.id, platform.log);
+    this.TuyaBulb = new TuyaBulb(accessory.context.device.id, platform.log, this.platform.config);
 
     // set accessory information
     this.accessory
